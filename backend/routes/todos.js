@@ -2,13 +2,13 @@ const router = require('express').Router();
 const Todo = require('../models/Todo');
 const verifyToken = require('../middleware/verifyToken');
 
-
 // CREATE
 router.post('/', verifyToken, async (req, res) => {
   try {
     const newTodo = new Todo({
       userId: req.user.id,
-      title: req.body.title
+      title: req.body.title,
+      priority: req.body.priority,
     });
     const savedTodo = await newTodo.save();
     res.status(201).json(savedTodo);
