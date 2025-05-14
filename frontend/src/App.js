@@ -1,10 +1,12 @@
-// src/App.js
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { ToastContainer } from 'react-toastify'; // ← 追加
+import 'react-toastify/dist/ReactToastify.css'; // ← 追加
+
 import Login from './pages/Login';
 import Register from './pages/Register';
 import TodoList from './pages/TodoList';
-import PrivateRoute from './components/PrivateRoute'; // ← 追加
+import PrivateRoute from './components/PrivateRoute';
 
 function App() {
   return (
@@ -21,6 +23,7 @@ function App() {
           }
         />
       </Routes>
+      <ToastContainer />
     </Router>
   );
 }
