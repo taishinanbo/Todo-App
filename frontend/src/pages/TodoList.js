@@ -58,6 +58,7 @@ function TodoList() {
       );
       setTodos((prev) => [...prev, res.data]);
       setNewTitle('');
+      setNewDescription('');
       setNewPriority(1);
       toast.success('ToDoを追加しました！');
     } catch (err) {
