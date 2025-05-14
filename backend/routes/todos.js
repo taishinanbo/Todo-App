@@ -8,6 +8,7 @@ router.post('/', verifyToken, async (req, res) => {
     const newTodo = new Todo({
       userId: req.user.id,
       title: req.body.title,
+      description: req.body.description,
       priority: req.body.priority,
     });
     const savedTodo = await newTodo.save();

@@ -5,12 +5,14 @@ import { toast } from 'react-toastify';
 function TodoList() {
   const [todos, setTodos] = useState([]);
   const [newTitle, setNewTitle] = useState('');
+  const [newDescription, setNewDescription] = useState('');
   const [newPriority, setNewPriority] = useState(1);
   const [token, setToken] = useState(null);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editId, setEditId] = useState(null);
   const [editTitle, setEditTitle] = useState('');
+  const [editDescription, setEditDescription] = useState('');
   const [editPriority, setEditPriority] = useState(1);
 
 
@@ -51,7 +53,7 @@ function TodoList() {
 
     try {
       const res = await axios.post('http://localhost:5050/api/todos',
-        { title: newTitle, priority: newPriority },
+        { title: newTitle, description: newDescription, priority: newPriority },
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setTodos((prev) => [...prev, res.data]);
@@ -100,6 +102,7 @@ function TodoList() {
     try {
       await axios.put(`http://localhost:5050/api/todos/${editId}`, {
         title: editTitle,
+        description: editDescription,
         priority: editPriority,
       }, {
         headers: { Authorization: `Bearer ${token}` },
@@ -132,6 +135,7 @@ function TodoList() {
   const openEditModal = (todo) => {
     setEditId(todo._id);
     setEditTitle(todo.title);
+    setEditDescription(todo.description || '');
     setEditPriority(todo.priority);
     setIsModalOpen(true);
   };
@@ -140,36 +144,58 @@ function TodoList() {
   return (
     <div className="todo-container">
       <div className="todo-header">
-        <h2>📋 トードゥ リスト</h2>
+        <h2>📋 トードゥを追加</h2>
       </div>
 
       <form onSubmit={handleAddTodo} className="todo-form">
-        <input
-          type="text"
-          value={newTitle}
-          onChange={(e) => setNewTitle(e.target.value)}
-          placeholder="新しい事項を追加"
-        />
-       <select
-          value={newPriority}
-          onChange={(e) => setNewPriority(e.target.value)}
-          className="priority-select"
-        >
-          <option value="1">🟢 低</option>
-          <option value="2">🟡 中</option>
-          <option value="3">🔴 高</option>
-        </select>
+        <div className="form-group">
+          <input
+            type="text"
+            value={newTitle}
+            onChange={(e) => setNewTitle(e.target.value)}
+            placeholder="新しい事項を追加"
+            required
+          />
+        </div>
 
-        <button type="submit">追加</button>
-        <button
-          type="button"
-          id="filtered-todos"
-          onClick={handleFilter}
-        >
-          {isFiltered ? 'すべて表示' : '完了済みを非表示'}
-        </button>
+        <div className="form-group">
+          <textarea
+            value={newDescription}
+            onChange={(e) => setNewDescription(e.target.value)}
+            placeholder="説明（100文字まで）"
+            maxLength={100}
+            className="todo-description"
+          />
+        </div>
 
+        <div className="form-group row">
+          <select
+            value={newPriority}
+            onChange={(e) => setNewPriority(e.target.value)}
+            className="priority-select"
+          >
+            <option value="1">🟢 低</option>
+            <option value="2">🟡 中</option>
+            <option value="3">🔴 高</option>
+          </select>
+
+          <button type="submit">追加</button>
+          <button
+            type="button"
+            id="filtered-todos"
+            onClick={handleFilter}
+          >
+            {isFiltered ? 'すべて表示' : '完了済みを非表示'}
+          </button>
+        </div>
       </form>
+
+      <div className="todo-header">
+        <h2>📝 トードゥ一覧</h2>
+        <span className="todo-count">
+          {filteredTodos.length} 件
+        </span>
+      </div>
 
       <ul className="todo-list">
         {filteredTodos
@@ -177,6 +203,7 @@ function TodoList() {
           .sort((a, b) => b.priority - a.priority)
           .map((todo) => (
             <li key={todo._id} className="todo-card">
+            <div className="todo-main">
               <span
                 onClick={() => toggleTodo(todo)}
                 className={todo.completed ? 'completed' : ''}
@@ -186,11 +213,20 @@ function TodoList() {
                 {todo.priority === 2 && ' 🟡'}
                 {todo.priority === 3 && ' 🔴'}
               </span>
-              <button onClick={() => openEditModal(todo)}>✏️</button>
-              <button onClick={() => deleteTodo(todo._id)}>🗑</button>
-            </li>
+              <div className="todo-actions">
+                <button onClick={() => openEditModal(todo)}>✏️</button>
+                <button onClick={() => deleteTodo(todo._id)}>🗑</button>
+              </div>
+            </div>
+            {todo.description && (
+              <div className="todo-meta">
+                <small>{todo.description}</small>
+              </div>
+            )}
+          </li>
           ))}
       </ul>
+      
       {isModalOpen && (
         <div className="modal-overlay">
           <div className="modal">
@@ -200,6 +236,13 @@ function TodoList() {
               value={editTitle}
               onChange={(e) => setEditTitle(e.target.value)}
               placeholder="タイトルを編集"
+            />
+            <textarea
+              value={editDescription}
+              onChange={(e) => setEditDescription(e.target.value)}
+              placeholder="説明（100文字まで）"
+              maxLength={100}
+              className="todo-description"
             />
             <select
               value={editPriority}

@@ -44,7 +44,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
+  height: 80vh;
 }
 
 .login-form {
@@ -97,8 +97,6 @@ body {
   background-color: #005fcc;
 }
 
-/* TodoList.css */
-
 .todo-container {
   max-width: 600px;
   margin: 2rem auto;
@@ -115,16 +113,40 @@ body {
 
 .todo-form {
   display: flex;
-  gap: 10px;
+  flex-direction: column;
+  gap: 1rem;
   margin-bottom: 2rem;
+
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 1rem;
 }
 
-.todo-form input {
-  flex: 1;
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-group.row {
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+}
+
+.todo-form input,
+.todo-form textarea {
+  width: 100%;
+  font-family: inherit;
   padding: 0.75rem 1rem;
   border: 1px solid #ccc;
   border-radius: 10px;
   font-size: 1rem;
+  box-sizing: border-box;
+}
+
+.todo-description {
+  resize: vertical;
+  min-height: 80px;
 }
 
 .priority-select {
@@ -155,27 +177,21 @@ body {
   border-radius: 10px;
   font-weight: 600;
   cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.todo-form button:hover {
+  background-color: #005fcc;
 }
 
 #filtered-todos {
-  background-color: #af52de; 
-  color: white;
-  border: none;
-  border-radius: 10px;
-  padding: 0.75rem 1.2rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
+  background-color: #af52de;
 }
 
 #filtered-todos:hover {
   background-color: #9b42cc;
 }
 
-
-.todo-form button:hover {
-  background-color: #005fcc;
-}
 
 .todo-list {
   list-style: none;
@@ -189,17 +205,18 @@ body {
   padding: 1rem;
   margin-bottom: 1rem;
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: column;
+  gap: 0.5rem;
   transition: all 0.2s ease;
 }
 
-.todo-card:hover {
-  transform: scale(1.01);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+.todo-main {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
-.todo-card span {
+.todo-main span {
   flex: 1;
   cursor: pointer;
   font-size: 1rem;
@@ -207,9 +224,23 @@ body {
   word-break: break-word;
 }
 
-.todo-card span.completed {
+.todo-main span.completed {
   text-decoration: line-through;
   color: #999;
+}
+
+.todo-actions button {
+  margin-left: 0.5rem;
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+.todo-meta small {
+  color: #666;
+  font-size: 0.85rem;
+  word-break: break-word;
 }
 
 .todo-card button {
@@ -260,6 +291,23 @@ body {
   font-size: 1rem;
   box-sizing: border-box;
   transition: border 0.2s ease;
+}
+
+.modal textarea {
+  width: 100%;
+  font-family: inherit;
+  padding: 0.75rem 1rem;
+  margin-bottom: 1rem;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+  box-sizing: border-box;
+  transition: border 0.2s ease;
+}
+
+.modal textarea:focus {
+  border-color: #007aff;
+  outline: none;
 }
 
 .modal input:focus,
