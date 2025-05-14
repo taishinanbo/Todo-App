@@ -103,7 +103,6 @@ const handleLogout = () => {
 
   return (
     <div>
-      <Headerbar />
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <h2>My Todos</h2>
         <button

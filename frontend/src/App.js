@@ -25,7 +25,17 @@ function App() {
           }
         />
       </Routes>
-      <ToastContainer />
+      <ToastContainer
+        position="top-center"
+        autoClose={2000}
+        hideProgressBar={false}
+        newestOnTop={true}
+        closeOnClick
+        pauseOnHover
+        draggable
+        toastClassName="toast-style"
+      />
+
     </Router>
   );
 }
