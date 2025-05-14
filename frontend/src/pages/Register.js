@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import '../App.css'; // 共通CSSを適用する想定
 
 function Register() {
@@ -15,40 +17,47 @@ function Register() {
         email,
         password,
       });
-      alert('登録が完了しました。ログインしてください。');
+      toast.success('登録成功！ログインしてください。');
       window.location.href = '/login'; // 登録後にログイン画面へ
     } catch (err) {
       console.error('登録エラー:', err.response?.data || err.message);
-      alert('登録に失敗しました。');
+      toast.error('登録に失敗しました。メールアドレスが既に使用されている可能性があります。');
     }
   };
 
   return (
-    <form className="login-container" onSubmit={handleRegister}>
-      <h2>ユーザー登録</h2>
-      <input
-        value={username}
-        onChange={e => setUsername(e.target.value)}
-        placeholder="ユーザー名"
-        required
-      />
-      <input
-        type="email"
-        value={email}
-        onChange={e => setEmail(e.target.value)}
-        placeholder="メールアドレス"
-        required
-      />
-      <input
-        type="password"
-        value={password}
-        onChange={e => setPassword(e.target.value)}
-        placeholder="パスワード"
-        required
-      />
-      <button type="submit">登録</button>
-    </form>
+    <div className="login-container">
+      <form onSubmit={handleRegister} className="login-form">
+        <h2 className="login-title">ユーザー登録</h2>
+        <input
+          type="text"
+          className="login-input"
+          value={username}
+          onChange={e => setUsername(e.target.value)}
+          placeholder="ユーザー名"
+          required
+        />
+        <input
+          type="email"
+          className="login-input"
+          value={email}
+          onChange={e => setEmail(e.target.value)}
+          placeholder="メールアドレス"
+          required
+        />
+        <input
+          type="password"
+          className="login-input"
+          value={password}
+          onChange={e => setPassword(e.target.value)}
+          placeholder="パスワード"
+          required
+        />
+        <button type="submit" className="login-button">登録</button>
+      </form>
+    </div>
   );
+
 }
 
 export default Register;
