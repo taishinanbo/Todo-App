@@ -96,3 +96,105 @@ body {
 .login-button:hover {
   background-color: #005fcc;
 }
+
+/* TodoList.css */
+
+.todo-container {
+  max-width: 600px;
+  margin: 2rem auto;
+  padding: 1rem;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.todo-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.todo-form {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 2rem;
+}
+
+.todo-form input {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  font-size: 1rem;
+}
+
+.todo-form button {
+  padding: 0.75rem 1.2rem;
+  background-color: #007aff;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+#filtered-todos {
+  background-color: #af52de; 
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 0.75rem 1.2rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+#filtered-todos:hover {
+  background-color: #9b42cc;
+}
+
+
+.todo-form button:hover {
+  background-color: #005fcc;
+}
+
+.todo-list {
+  list-style: none;
+  padding: 0;
+}
+
+.todo-card {
+  background: #ffffff;
+  border-radius: 14px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+  padding: 1rem;
+  margin-bottom: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: all 0.2s ease;
+}
+
+.todo-card:hover {
+  transform: scale(1.01);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+}
+
+.todo-card span {
+  flex: 1;
+  cursor: pointer;
+  font-size: 1rem;
+  color: #333;
+  word-break: break-word;
+}
+
+.todo-card span.completed {
+  text-decoration: line-through;
+  color: #999;
+}
+
+.todo-card button {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
