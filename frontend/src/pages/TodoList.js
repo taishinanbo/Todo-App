@@ -1,6 +1,9 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
+import { FaRegUserCircle, FaCheck, FaEdit, FaTrash, FaCreativeCommonsShare } from 'react-icons/fa';
+
+import TodoCard from '../components/TodoCard';
 
 function TodoList() {
   const [todos, setTodos] = useState([]);
@@ -10,11 +13,17 @@ function TodoList() {
   const [token, setToken] = useState(null);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [shareModalOpen, setShareModalOpen] = useState(false);
+
   const [editId, setEditId] = useState(null);
   const [editTitle, setEditTitle] = useState('');
   const [editDescription, setEditDescription] = useState('');
   const [editPriority, setEditPriority] = useState(1);
 
+  const [editSharedUser, setEditSharedUser] = useState([]); // users with _id, username, email
+  const [allUsers, setAllUsers] = useState([]);
+  const [selectedUserToShare, setSelectedUserToShare] = useState('');
+  const [currentUserId, setCurrentUserId] = useState(null);
 
   // 初回トークン取得
   useEffect(() => {
@@ -24,7 +33,61 @@ function TodoList() {
       return;
     }
     setToken(storedToken);
+
+    const fetchCurrentUser = async () => {
+      try {
+        const res = await axios.get('http://localhost:5050/api/todos/currentUser', {
+          headers: { Authorization: `Bearer ${storedToken}` },
+        });
+        setCurrentUserId(res.data.userId);
+      } catch (err) {
+        console.error('ユーザー取得エラー:', err.response?.data || err.message);
+      }
+    }
+    fetchCurrentUser();
   }, []);
+
+  const openShareModal = async (todo) => {
+      setEditId(todo._id);
+      setEditSharedUser(todo.sharedWith || []);
+      setShareModalOpen(true);
+
+      try {
+        const res = await axios.get('http://localhost:5050/api/todos/users', {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        setAllUsers(res.data);
+      } catch (err) {
+        toast.error('ユーザー一覧の取得に失敗しました');
+      }
+  };
+
+  const handleAddSharedUser = () => {
+  const user = allUsers.find((u) => u._id === selectedUserToShare);
+  if (user && !editSharedUser.some((u) => u._id === user._id)) {
+    setEditSharedUser((prev) => [...prev, user]);
+    setSelectedUserToShare('');
+  }
+};
+
+const handleRemoveSharedUser = (id) => {
+  setEditSharedUser((prev) => prev.filter((u) => u._id !== id));
+};
+
+const handleSaveSharedUsers = async () => {
+  try {
+    const res = await axios.patch(`http://localhost:5050/api/todos/${editId}/share`, {
+      sharedWith: editSharedUser.map((u) => u._id)
+    }, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+
+    toast.success('共有ユーザーを更新しました');
+    setShareModalOpen(false);
+  } catch (err) {
+    toast.error('共有設定の保存に失敗しました');
+  }
+};
 
   // ToDo取得（初回＋5秒ごと）
   useEffect(() => {
@@ -141,6 +204,7 @@ function TodoList() {
     setIsModalOpen(true);
   };
 
+  // const TodoCard = ({ todo, currentUserId, onToggle, onEdit, onDelete, onShare }) => {
 
   return (
     <div className="todo-container">
@@ -203,41 +267,33 @@ function TodoList() {
           .slice()
           .sort((a, b) => b.priority - a.priority)
           .map((todo) => (
-            <li key={todo._id} className="todo-card">
-            <div className="todo-main">
-              <span
-                onClick={() => toggleTodo(todo)}
-                className={todo.completed ? 'completed' : ''}
-              >
-                {todo.title}
-                {todo.priority === 1 && ' 🟢'}
-                {todo.priority === 2 && ' 🟡'}
-                {todo.priority === 3 && ' 🔴'}
-              </span>
-              <div className="todo-actions">
-                <button onClick={() => openEditModal(todo)}>✏️</button>
-                <button onClick={() => deleteTodo(todo._id)}>🗑</button>
-              </div>
-            </div>
-            {todo.description && (
-              <div className="todo-meta">
-                <small>{todo.description}</small>
-              </div>
-            )}
-          </li>
+            <TodoCard
+              key={todo._id}
+              todo={todo}
+              currentUserId={currentUserId}
+              onToggle={toggleTodo}
+              onEdit={openEditModal}
+              onDelete={deleteTodo}
+              onShare={openShareModal}
+            />
           ))}
       </ul>
       
       {isModalOpen && (
         <div className="modal-overlay">
           <div className="modal">
-            <h3>編集</h3>
+            <div className="modal-header">
+              <h3>編集</h3>
+              <button className="modal-close" onClick={() => setIsModalOpen(false)}>×</button>
+            </div>
+
             <input
               type="text"
               value={editTitle}
               onChange={(e) => setEditTitle(e.target.value)}
               placeholder="タイトルを編集"
             />
+
             <textarea
               value={editDescription}
               onChange={(e) => setEditDescription(e.target.value)}
@@ -245,6 +301,7 @@ function TodoList() {
               maxLength={100}
               className="todo-description"
             />
+
             <select
               value={editPriority}
               onChange={(e) => setEditPriority(Number(e.target.value))}
@@ -253,15 +310,54 @@ function TodoList() {
               <option value={2}>🟡 中</option>
               <option value={3}>🔴 高</option>
             </select>
-            <div style={{ marginTop: '1rem' }}>
-              <button onClick={handleEditSubmit}>保存</button>
-              <button onClick={() => setIsModalOpen(false)} style={{ marginLeft: '10px' }}>
-                キャンセル
-              </button>
-            </div>
+
+            <button className="modal-action primary" onClick={handleEditSubmit}>保存</button>
           </div>
         </div>
       )}
+
+      {shareModalOpen && (
+        <div className="modal-overlay">
+          <div className="modal">
+            <div className="modal-header">
+              <h3>共有ユーザーを管理</h3>
+              <button className="modal-close" onClick={() => setShareModalOpen(false)}>×</button>
+            </div>
+
+            <div className="shared-list refined-list">
+              {editSharedUser.map((user) => (
+                <div key={user._id} className="shared-user-row">
+                  <div className="user-info">
+                    <strong>{user.username}</strong>
+                    <span className="user-email">{user.email}</span>
+                  </div>
+                  <button onClick={() => handleRemoveSharedUser(user._id)} className="remove-btn">削除</button>
+                </div>
+              ))}
+            </div>
+
+            <div className="share-form">
+              <select
+                value={selectedUserToShare}
+                onChange={(e) => setSelectedUserToShare(e.target.value)}
+              >
+                <option value="">共有先を選択</option>
+                {allUsers
+                  .filter((user) => !editSharedUser.find((u) => u._id === user._id))
+                  .map((user) => (
+                    <option key={user._id} value={user._id}>
+                      {user.username} ({user.email})
+                    </option>
+                  ))}
+              </select>
+              <button className="modal-action secondary" onClick={handleAddSharedUser}>追加</button>
+            </div>
+
+            <button className="modal-action primary full-width" onClick={handleSaveSharedUsers}>保存</button>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }

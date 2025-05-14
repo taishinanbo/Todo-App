@@ -197,57 +197,73 @@ body {
   list-style: none;
   padding: 0;
 }
-
 .todo-card {
   background: #ffffff;
-  border-radius: 14px;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
-  padding: 1rem;
-  margin-bottom: 1rem;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+  padding: 1.2rem 1.5rem;
+  margin-bottom: 1.5rem;
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  transition: all 0.2s ease;
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.todo-card:hover {
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08);
+  transform: translateY(-2px);
 }
 
 .todo-main {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 1rem;
 }
 
-.todo-main span {
+.todo-title {
   flex: 1;
+  font-size: 1.05rem;
+  font-weight: 500;
+  color: #1c1c1e;
   cursor: pointer;
-  font-size: 1rem;
-  color: #333;
   word-break: break-word;
 }
 
-.todo-main span.completed {
+.todo-title.completed {
   text-decoration: line-through;
-  color: #999;
-}
-
-.todo-actions button {
-  margin-left: 0.5rem;
-  background: none;
-  border: none;
-  font-size: 1.2rem;
-  cursor: pointer;
+  color: #8e8e93;
 }
 
 .todo-meta small {
+  font-size: 0.9rem;
   color: #666;
-  font-size: 0.85rem;
-  word-break: break-word;
 }
 
-.todo-card button {
+.todo-actions button {
   background: none;
   border: none;
   font-size: 1.2rem;
+  color: #6e6e73;
   cursor: pointer;
+  padding: 0.3rem;
+  border-radius: 6px;
+  transition: background-color 0.15s ease;
+}
+
+.todo-actions button:hover {
+  background-color: #e5e5ea;
+}
+
+.shared-badge {
+  margin-right: 6px;
+  vertical-align: middle;
+  color: #007aff;
+  font-size: 1.1rem;
+}
+
+.shared-badge:hover {
+  color: #005fcc;
 }
 
 .modal-overlay {
@@ -257,92 +273,197 @@ body {
   width: 100%;
   height: 100%;
   background: rgba(0, 0, 0, 0.3);
-  backdrop-filter: blur(3px);
+  backdrop-filter: blur(4px);
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 999;
-}
-
-.modal {
-  background: #ffffff;
-  padding: 2rem;
-  border-radius: 16px;
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
-  width: 90%;
-  max-width: 400px;
   animation: fadeIn 0.2s ease-out;
 }
 
-.modal h3 {
-  margin-top: 0;
-  font-size: 1.4rem;
+.modal {
+  background: #fff;
+  padding: 2rem;
+  border-radius: 20px;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.15);
+  width: 90%;
+  max-width: 420px;
+  box-sizing: border-box;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   margin-bottom: 1rem;
-  color: #333;
+}
+
+.modal-header h3 {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: #1c1c1e;
+  margin: 0;
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  font-size: 1.4rem;
+  font-weight: bold;
+  color: #666;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.modal-close:hover {
+  color: #000;
 }
 
 .modal input,
-.modal select {
-  width: 100%;
-  padding: 0.75rem 1rem;
-  margin-bottom: 1rem;
-  border-radius: 10px;
-  border: 1px solid #ccc;
-  font-size: 1rem;
-  box-sizing: border-box;
-  transition: border 0.2s ease;
-}
-
+.modal select,
 .modal textarea {
   width: 100%;
-  font-family: inherit;
   padding: 0.75rem 1rem;
-  margin-bottom: 1rem;
-  border-radius: 10px;
-  border: 1px solid #ccc;
+  border-radius: 12px;
+  border: 1px solid #d1d1d6;
   font-size: 1rem;
+  margin-bottom: 1rem;
   box-sizing: border-box;
-  transition: border 0.2s ease;
-}
-
-.modal textarea:focus {
-  border-color: #007aff;
-  outline: none;
+  background-color: #fafafa;
+  transition: border 0.2s ease, background 0.2s ease;
 }
 
 .modal input:focus,
-.modal select:focus {
+.modal select:focus,
+.modal textarea:focus {
   border-color: #007aff;
+  background-color: #fff;
   outline: none;
 }
 
-.modal button {
-  padding: 0.6rem 1.2rem;
+.modal textarea {
+  resize: vertical;
+  min-height: 100px;
+  font-family: inherit;
+}
+
+.modal-action {
+  padding: 0.75rem 1.2rem;
   font-size: 1rem;
-  border-radius: 8px;
+  border-radius: 10px;
   border: none;
   font-weight: 600;
   cursor: pointer;
   transition: background-color 0.2s ease;
 }
 
-.modal button:first-of-type {
+.modal-action.primary {
   background-color: #007aff;
-  color: white;
+  color: #fff;
 }
 
-.modal button:first-of-type:hover {
+.modal-action.primary:hover {
   background-color: #005fcc;
 }
 
-.modal button:last-of-type {
+.modal-action.secondary {
   background-color: #f2f2f2;
   color: #333;
   margin-left: 10px;
 }
 
-.modal button:last-of-type:hover {
+.modal-action.secondary:hover {
+  background-color: #e5e5ea;
+}
+
+.modal-action.full-width {
+  width: 100%;
+  margin-top: 1rem;
+}
+.share-form {
+  display: flex;
+  gap: 0.75rem;
+  align-items: stretch;
+}
+
+.share-form select,
+.share-form button {
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  border-radius: 12px;
+  border: 1px solid #d1d1d6;
+  box-sizing: border-box;
+  height: 48px;
+}
+
+.share-form select {
+  flex: 1;
+  background-color: #fafafa;
+  transition: border 0.2s ease, background 0.2s ease;
+}
+
+.share-form select:focus {
+  border-color: #007aff;
+  background-color: #fff;
+  outline: none;
+}
+
+.share-form button {
+  background-color: #f2f2f2;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  white-space: nowrap;
+}
+
+.share-form button:hover {
   background-color: #e0e0e0;
+}
+
+
+.shared-list.refined-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  max-height: 200px;
+  overflow-y: auto;
+  margin-bottom: 1rem;
+}
+
+.shared-user-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0.75rem;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  border: 1px solid #e5e5ea;
+}
+
+.shared-user-row .user-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.shared-user-row .user-email {
+  font-size: 0.85rem;
+  color: #888;
+}
+
+.remove-btn {
+  background: none;
+  border: none;
+  color: #ff3b30;
+  font-weight: 600;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.remove-btn:hover {
+  color: #d50000;
 }
 
 @keyframes fadeIn {
