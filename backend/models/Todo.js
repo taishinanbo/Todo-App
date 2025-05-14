@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const { ObjectId } = mongoose.Schema.Types;
 
 const TodoSchema = new mongoose.Schema({
   userId: {
@@ -23,6 +24,10 @@ const TodoSchema = new mongoose.Schema({
     enum: [1, 2, 3],
     default: 1
   },
+  sharedWith: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  }],
   createdAt: {
     type: Date,
     default: Date.now
