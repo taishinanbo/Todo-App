@@ -7,10 +7,12 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import TodoList from './pages/TodoList';
 import PrivateRoute from './components/PrivateRoute';
+import Headerbar from './components/Headerbar';
 
 function App() {
   return (
     <Router>
+      <Headerbar />
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
