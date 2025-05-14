@@ -145,7 +145,7 @@ function TodoList() {
   return (
     <div className="todo-container">
       <div className="todo-header">
-        <h2>📋 トードゥを追加</h2>
+        <h2>📋 トゥドゥを追加</h2>
       </div>
 
       <form onSubmit={handleAddTodo} className="todo-form">
@@ -192,7 +192,7 @@ function TodoList() {
       </form>
 
       <div className="todo-header">
-        <h2>📝 トードゥ一覧</h2>
+        <h2>📝 トゥドゥ一覧</h2>
         <span className="todo-count">
           {filteredTodos.length} 件
         </span>
