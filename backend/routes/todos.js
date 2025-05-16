@@ -29,6 +29,87 @@ router.post('/', verifyToken, async (req, res) => {
   }
 });
 
+// コメントを投稿
+router.post('/:id/comments', verifyToken, async (req, res) => {
+  try {
+    const todo = await Todo.findById(req.params.id);
+    if (!todo) {
+      return res.status(404).json({ message: 'ToDoが見つかりません。' });
+    }
+    const comment = {
+      userId: req.user.id,
+      text: req.body.text,
+      createdAt: new Date()
+    };
+    todo.comments.push(comment);
+    await todo.save();
+    const populatedTodo = await Todo.findById(req.params.id)
+      .populate('userId', 'username email')
+      .populate('sharedWith', 'username email')
+      .populate('comments.userId', 'username email');
+    res.status(200).json(populatedTodo);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'サーバーエラーが発生しました。' });
+  }
+});
+
+// トゥドゥのコメントを取得
+router.get('/:id/comments', verifyToken, async (req, res) => {
+  const page = parseInt(req.query.page) || 1;
+  const limit = 5;
+
+  try {
+    const todo = await Todo.findById(req.params.id)
+      .populate('comments.userId', 'username email');
+
+    if (!todo) {
+      return res.status(404).json({ message: 'ToDoが見つかりません。' });
+    }
+
+    const total = todo.comments.length;
+    const start = (page - 1) * limit;
+    const paginated = todo.comments.slice(start, start + limit);
+
+    res.status(200).json({
+      comments: paginated,
+      total,
+      page,
+      totalPages: Math.ceil(total / limit)
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'サーバーエラーが発生しました。' });
+  }
+});
+
+// コメントを削除
+router.delete('/:id/comments/:commentId', verifyToken, async (req, res) => {
+  try {
+    const todo = await Todo.findById(req.params.id);
+    if (!todo) {
+      return res.status(404).json({ message: 'ToDoが見つかりません。' });
+    }
+    const commentIndex = todo.comments.findIndex(comment => comment._id.toString() === req.params.commentId);
+    if (commentIndex === -1) {
+      return res.status(404).json({ message: 'コメントが見つかりません。' }); 
+    }
+    if (todo.comments[commentIndex].userId.toString() !== req.user.id) {
+      return res.status(403).json({ message: 'コメントの削除権限がありません。' });
+    }
+    todo.comments.splice(commentIndex, 1);
+    await todo.save();
+    const populatedTodo = await Todo.findById(req.params.id)
+      .populate('userId', 'username email')
+      .populate('sharedWith', 'username email')
+      .populate('comments.userId', 'username email');
+    res.status(200).json(populatedTodo);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'サーバーエラーが発生しました。' });
+  }
+});
+
 // Get the current user ID
 router.get('/currentUser', verifyToken, (req, res) => {
   res.status(200).json({ userId: req.user.id });
