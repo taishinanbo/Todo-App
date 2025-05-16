@@ -192,68 +192,72 @@ body {
   background-color: #9b42cc;
 }
 
-
 .todo-list {
   list-style: none;
   padding: 0;
-}
-.todo-card {
-  background: #ffffff;
-  border-radius: 16px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
-  padding: 1.2rem 1.5rem;
-  margin-bottom: 1.5rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  transition: box-shadow 0.2s ease, transform 0.2s ease;
-}
-
-.todo-card:hover {
-  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08);
-  transform: translateY(-2px);
 }
 
 .todo-main {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
   gap: 1rem;
+  padding: 0.5rem 0;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  padding: 1rem;
+  margin-bottom: 1rem;
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+  border: 1px solid #e5e5ea;
+  position: relative;
+  overflow: hidden;
+}
+
+.todo-content {
+  flex: 1;
 }
 
 .todo-title {
-  flex: 1;
-  font-size: 1.05rem;
+  display: block;
+  font-size: 1.1rem;
   font-weight: 500;
-  color: #1c1c1e;
+  color: #333;
   cursor: pointer;
-  word-break: break-word;
 }
 
 .todo-title.completed {
   text-decoration: line-through;
-  color: #8e8e93;
+  color: #999;
 }
 
-.todo-meta small {
-  font-size: 0.9rem;
+.todo-meta {
+  margin-top: 0.25rem;
+  font-size: .95rem;
   color: #666;
+  word-break: break-word;
+}
+
+.todo-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
 }
 
 .todo-actions button {
   background: none;
   border: none;
   font-size: 1.2rem;
-  color: #6e6e73;
   cursor: pointer;
-  padding: 0.3rem;
-  border-radius: 6px;
-  transition: background-color 0.15s ease;
+  color: #555;
+  transition: color 0.2s ease;
 }
 
 .todo-actions button:hover {
-  background-color: #e5e5ea;
+  color: #000;
 }
+
 
 .shared-badge {
   margin-right: 6px;
@@ -476,3 +480,149 @@ body {
     transform: translateY(0);
   }
 }
+
+.comment-list {
+  max-height: 300px;
+  overflow-y: auto;
+  margin-bottom: 1rem;
+}
+
+.comment-item {
+  position: relative;
+  background: #f9f9f9;
+  padding: 0.75rem 1rem;
+  border-radius: 12px;
+  margin-bottom: 0.75rem;
+}
+
+.comment-item strong {
+  display: block;
+  font-size: 0.9rem;
+  color: #333;
+  margin-bottom: 0.25rem;
+}
+
+.comment-item p {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #444;
+}
+
+.comment-item .delete-comment {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.75rem;
+  background: none;
+  border: none;
+  color: #ff3b30;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.comment-item .delete-comment:hover {
+  color: #d50000;
+}
+
+.comment-timestamp {
+  margin-top: 0.5rem;
+  font-size: 0.75rem;
+  color: #999;
+  display: flex;
+  gap: 1rem;
+}
+
+.comment-action-container {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.95rem;
+}
+
+.comment-action-container button {
+  background: none;
+  border: none;
+  font-size: 1.1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+.comment-count {
+  color: #333;
+  font-weight: 500;
+  font-size: 0.95rem;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  margin-top: 1rem;
+}
+
+.pagination button {
+  background: none;
+  border: none;
+  padding: 0.5rem 1rem;
+  margin: 0 0.25rem;
+  font-size: 1rem;
+  color: #007aff;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.pagination button:hover {
+  background-color: #e5e5ea;
+  color: #005fcc;
+}
+
+
+
+/*
+{showCommentModal && (
+        <div className="modal-overlay">
+          <div className="modal">
+            <div className="modal-header">
+              <h3>💬 コメント</h3>
+              <button className="modal-close" onClick={() => setShowCommentModal(false)}>×</button>
+            </div>
+
+            <div className="comment-list">
+              {comments.length === 0 && <p>コメントがまだありません。</p>}
+              {comments.map((c) => (
+                <div key={c._id} className="comment-item">
+                  <strong>{c.userId?.username || '匿名'}:</strong>
+                  <p>{c.text}</p>
+                </div>
+              ))}
+            </div>
+
+            {totalPages > 1 && (
+              <div className="pagination">
+                {[...Array(totalPages)].map((_, i) => (
+                  <button
+                    key={i}
+                    onClick={() => setPage(i + 1)}
+                    className={page === i + 1 ? 'active' : ''}
+                  >
+                    {i + 1}
+                  </button>
+                ))}
+              </div>
+            )}
+
+            <textarea
+              value={commentText}
+              onChange={(e) => setCommentText(e.target.value)}
+              placeholder="コメントを入力..."
+              rows={3}
+              style={{ width: '100%', marginTop: '1rem' }}
+            />
+
+            <button onClick={handleCommentSubmit} className="modal-action primary full-width" style={{ marginTop: '0.5rem' }}>
+              コメント送信
+            </button>
+          </div>
+        </div>
+      )}
+        */
