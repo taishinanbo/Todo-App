@@ -62,6 +62,36 @@ router.get('/', verifyToken, async (req, res) => {
   }
 });
 
+// Get a SINGLE Todo
+router.get('/:id', verifyToken, async (req, res) => {
+  try {
+    const todo = await Todo.findById(req.params.id)
+      .populate('userId', 'username email')
+      .populate('sharedWith', 'username email');
+
+    if (!todo) {
+      return res.status(404).json({ message: 'ToDoが見つかりません。' });
+    }
+
+    const userIdStr = req.user.id.toString();
+    const ownerIdStr = todo.userId?._id?.toString() || todo.userId.toString();
+    const sharedWithIds = todo.sharedWith.map(user => user._id?.toString() || user.toString());
+
+    const isOwner = ownerIdStr === userIdStr;
+    const isSharedUser = sharedWithIds.includes(userIdStr);
+
+    if (!isOwner && !isSharedUser) {
+      return res.status(403).json({ message: 'アクセスが拒否されました。' });
+    }
+
+    res.status(200).json(todo);
+  } catch (err) {
+    console.error('ToDo取得エラー:', err);
+    res.status(500).json({ message: 'サーバーエラーが発生しました。' });
+  }
+});
+
+
 // UPDATE
 router.put('/:id', verifyToken, async (req, res) => {
   try {

@@ -1,8 +1,21 @@
 import React from 'react';
-import { FaRegUserCircle, FaCheck, FaEdit, FaTrash, FaCreativeCommonsShare } from 'react-icons/fa';
-// import './TodoListStyled.css'; // new CSS file for styling
+import {
+  FaRegUserCircle,
+  FaEdit,
+  FaTrash,
+  FaCreativeCommonsShare,
+  FaCommentDots
+} from 'react-icons/fa';
 
-const TodoCard = ({ todo, currentUserId, onToggle, onEdit, onDelete, onShare }) => {
+const TodoCard = ({
+  todo,
+  currentUserId,
+  onToggle,
+  onEdit,
+  onDelete,
+  onShare,
+  onComment
+}) => {
   const isOwner = todo.userId && todo.userId._id?.toString() === currentUserId;
   const isShared = todo.userId && todo.userId._id?.toString() !== currentUserId;
 
@@ -24,19 +37,25 @@ const TodoCard = ({ todo, currentUserId, onToggle, onEdit, onDelete, onShare }) 
           {todo.priority === 3 && ' 🔴'}
         </span>
 
-        {isOwner && (
-          <div className="todo-actions">
-            <button onClick={() => onShare(todo)} title="共有ユーザー">
-              <FaRegUserCircle />
-            </button>
-            <button onClick={() => onEdit(todo)} title="編集">
-              <FaEdit />
-            </button>
-            <button onClick={() => onDelete(todo._id)} title="削除">
-              <FaTrash />
-            </button>
-          </div>
-        )}
+        <div className="todo-actions">
+          <button onClick={() => onComment(todo)} title="コメント">
+            <FaCommentDots />
+          </button>
+
+          {isOwner && (
+            <>
+              <button onClick={() => onShare(todo)} title="共有ユーザー">
+                <FaRegUserCircle />
+              </button>
+              <button onClick={() => onEdit(todo)} title="編集">
+                <FaEdit />
+              </button>
+              <button onClick={() => onDelete(todo._id)} title="削除">
+                <FaTrash />
+              </button>
+            </>
+          )}
+        </div>
       </div>
 
       {todo.description && (

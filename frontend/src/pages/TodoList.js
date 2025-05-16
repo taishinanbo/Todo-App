@@ -25,6 +25,12 @@ function TodoList() {
   const [selectedUserToShare, setSelectedUserToShare] = useState('');
   const [currentUserId, setCurrentUserId] = useState(null);
 
+  const handleCommentOpen = (todo) => {
+    // e.g. navigate or open modal
+    window.location.href = `/todo/${todo._id}/comments`; // or set state
+  };
+
+
   // 初回トークン取得
   useEffect(() => {
     const storedToken = localStorage.getItem('token');
@@ -275,6 +281,7 @@ const handleSaveSharedUsers = async () => {
               onEdit={openEditModal}
               onDelete={deleteTodo}
               onShare={openShareModal}
+              onComment={handleCommentOpen}
             />
           ))}
       </ul>
