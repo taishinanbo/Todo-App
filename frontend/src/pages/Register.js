@@ -3,7 +3,7 @@ import axios from 'axios';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import '../App.css'; // 共通CSSを適用する想定'
-import fetchService from '../../fetchService';
+import fetchService from '../fetchService';
 
 function Register() {
   const [username, setUsername] = useState('');

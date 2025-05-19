@@ -8,7 +8,7 @@ import {
   FaComment,
 } from 'react-icons/fa';
 import { toast } from 'react-toastify';
-import fetchService from '../../fetchService';
+import fetchService from '../fetchService';
 
 const TodoCard = ({ todo, currentUserId, onToggle, onEdit, onDelete, onShare }) => {
   const isOwner = todo.userId?._id === currentUserId;

@@ -2,7 +2,7 @@ import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { FaRegUserCircle, FaCheck, FaEdit, FaTrash, FaCreativeCommonsShare } from 'react-icons/fa';
-import fetchService from '../../fetchService';
+import fetchService from '../fetchService';
 
 import TodoCard from '../components/TodoCard';
 

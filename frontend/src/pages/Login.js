@@ -3,7 +3,7 @@ import axios from 'axios';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-import fetchService from '../../fetchService';
+import fetchService from '../fetchService';
 
 function Login() {
   const [email, setEmail] = useState('');
