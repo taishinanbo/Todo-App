@@ -28,60 +28,61 @@ const TodoCard = ({ todo, currentUserId, onToggle, onEdit, onDelete, onShare }) 
 
   const fetchComments = async () => {
     try {
-      const res = await fetchService.get(`/api/todos/${todo._id}/comments?page=${page}`, {
+      const res = await fetchService.get(`/api/todos/${todo._id}/comments`, {
         params: { page },
-        headers: { Authorization: `Bearer ${token}` },
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
-      const data = await res.json();
-      setComments(data.comments || []);
+
+      setComments(res.data.comments); // ✅ Axios gives you data directly
     } catch (err) {
-      console.error('コメント取得失敗', err);
+      console.error('コメント取得エラー', err);
+      toast.error('コメントの取得に失敗しました。');
     }
   };
+
 
   const handleCommentSubmit = async () => {
     if (!commentText.trim()) return;
 
     try {
-      const res = await fetchService.post(`/api/todos/${todo._id}/comments`, {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ text: commentText }),
-      });
-      if (res.ok) {
-        setCommentText('');
-        toast.success('コメントを送信しました。');
-        fetchComments();
-      } else {
-        toast.error('コメントの送信に失敗しました。');
-        console.error('送信失敗');
-      }
+      const res = await fetchService.post(
+        `/api/todos/${todo._id}/comments`,
+        { text: commentText },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      setCommentText('');
+      toast.success('コメントを送信しました。');
+      fetchComments();
     } catch (err) {
-      console.error(err);
+      console.error('送信失敗', err);
+      toast.error('コメントの送信に失敗しました。');
     }
   };
 
+
   const handleCommentDelete = async (commentId) => {
     try {
-      const res = await fetchService.delete(`/api/todos/${todo._id}/comments/${commentId}`, {
+      await fetchService.delete(`/api/todos/${todo._id}/comments/${commentId}`, {
         headers: {
-          'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
       });
-      if (res.ok) {
-        toast.success('コメントを削除しました。');
-        setComments((prev) => prev.filter((c) => c._id !== commentId));
-      } else {
-        console.error('削除失敗');
-        toast.error('コメントの削除に失敗しました。');
-      }
+
+      toast.success('コメントを削除しました。');
+      setComments((prev) => prev.filter((c) => c._id !== commentId));
     } catch (err) {
       console.error('削除エラー', err);
+      toast.error('コメントの削除に失敗しました。');
     }
   };
+
 
   const totalPages = Math.ceil((todo.comments?.length || 0) / commentsPerPage);
 
