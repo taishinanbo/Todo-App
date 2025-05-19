@@ -28,7 +28,7 @@ const TodoCard = ({ todo, currentUserId, onToggle, onEdit, onDelete, onShare }) 
 
   const fetchComments = async () => {
     try {
-      const res = await fetchService.get(`/api/todos/${todo._id}/comments`, {
+      const res = await fetchService.get(`/api/todos/${todo._id}/comments?page=${page}`, {
         params: { page },
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -41,14 +41,15 @@ const TodoCard = ({ todo, currentUserId, onToggle, onEdit, onDelete, onShare }) 
 
   const handleCommentSubmit = async () => {
     if (!commentText.trim()) return;
+
     try {
-      const res = await fetchService.post(
-        `/api/todos/${todo._id}/comments`,
-        { text: commentText },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
+      const res = await fetchService.post(`/api/todos/${todo._id}/comments`, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ text: commentText }),
+      });
       if (res.ok) {
         setCommentText('');
         toast.success('コメントを送信しました。');
@@ -64,20 +65,21 @@ const TodoCard = ({ todo, currentUserId, onToggle, onEdit, onDelete, onShare }) 
 
   const handleCommentDelete = async (commentId) => {
     try {
-      const res = await fetchService.delete(
-        `/api/todos/${todo._id}/comments/${commentId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      toast.success('コメントを削除しました。');
-      setComments((prev) => prev.filter((c) => c._id !== commentId));
+      const res = await fetchService.delete(`/api/todos/${todo._id}/comments/${commentId}`, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (res.ok) {
+        toast.success('コメントを削除しました。');
+        setComments((prev) => prev.filter((c) => c._id !== commentId));
+      } else {
+        console.error('削除失敗');
+        toast.error('コメントの削除に失敗しました。');
+      }
     } catch (err) {
       console.error('削除エラー', err);
-      toast.error('コメントの削除に失敗しました。');
     }
   };
 
