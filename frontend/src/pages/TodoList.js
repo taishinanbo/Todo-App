@@ -2,6 +2,7 @@ import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { FaRegUserCircle, FaCheck, FaEdit, FaTrash, FaCreativeCommonsShare } from 'react-icons/fa';
+import fetchService from '../../fetchService';
 
 import TodoCard from '../components/TodoCard';
 
@@ -36,7 +37,7 @@ function TodoList() {
 
     const fetchCurrentUser = async () => {
       try {
-        const res = await axios.get('http://localhost:5050/api/todos/currentUser', {
+        const res = await fetchService.get('/api/todos/currentUser', {
           headers: { Authorization: `Bearer ${storedToken}` },
         });
         setCurrentUserId(res.data.userId);
@@ -53,7 +54,7 @@ function TodoList() {
       setShareModalOpen(true);
 
       try {
-        const res = await axios.get('http://localhost:5050/api/todos/users', {
+        const res = await fetchService.get('/api/todos/users', {
           headers: { Authorization: `Bearer ${token}` }
         });
         setAllUsers(res.data);
@@ -76,7 +77,7 @@ const handleRemoveSharedUser = (id) => {
 
 const handleSaveSharedUsers = async () => {
   try {
-    const res = await axios.patch(`http://localhost:5050/api/todos/${editId}/share`, {
+    const res = await fetchService.patch(`/api/todos/${editId}/share`, {
       sharedWith: editSharedUser.map((u) => u._id)
     }, {
       headers: { Authorization: `Bearer ${token}` }
@@ -94,7 +95,7 @@ const handleSaveSharedUsers = async () => {
     if (!token) return;
     const fetchTodos = async () => {
       try {
-        const res = await axios.get('http://localhost:5050/api/todos', {
+        const res = await fetchService.get('/api/todos', {
           headers: { Authorization: `Bearer ${token}` },
         });
         setTodos(res.data);
@@ -115,7 +116,8 @@ const handleSaveSharedUsers = async () => {
     if (!token || !newTitle.trim()) return;
 
     try {
-      const res = await axios.post('http://localhost:5050/api/todos',
+      const res = await fetchService.post(
+        '/api/todos',
         { title: newTitle, description: newDescription, priority: newPriority },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -133,7 +135,8 @@ const handleSaveSharedUsers = async () => {
   // 完了トグル
   const toggleTodo = async (todo) => {
     try {
-      await axios.put(`http://localhost:5050/api/todos/${todo._id}`,
+      await fetchService.put(
+        `/api/todos/${todo._id}`,
         { completed: !todo.completed },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -151,7 +154,7 @@ const handleSaveSharedUsers = async () => {
   // ToDo削除
   const deleteTodo = async (id) => {
     try {
-      await axios.delete(`http://localhost:5050/api/todos/${id}`, {
+      await fetchService.delete(`/api/todos/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setTodos((prev) => prev.filter((todo) => todo._id !== id));
@@ -164,7 +167,7 @@ const handleSaveSharedUsers = async () => {
 
   const handleEditSubmit = async () => {
     try {
-      await axios.put(`http://localhost:5050/api/todos/${editId}`, {
+      await fetchService.put(`/api/todos/${editId}`, {
         title: editTitle,
         description: editDescription,
         priority: editPriority,

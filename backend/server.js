@@ -8,7 +8,13 @@ const app = express(); // ← これを最初に定義！
 const PORT = process.env.PORT || 5000;
 
 // CORS設定（必要に応じて緩く設定）
-app.use(cors());
+app.use(
+  cors({
+    origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    credentials: true,
+  })
+)
 
 // ミドルウェア
 app.use(express.json());

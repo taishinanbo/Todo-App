@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import '../App.css'; // 共通CSSを適用する想定
+import '../App.css'; // 共通CSSを適用する想定'
+import fetchService from '../../fetchService';
 
 function Register() {
   const [username, setUsername] = useState('');
@@ -12,7 +13,7 @@ function Register() {
   const handleRegister = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('http://localhost:5050/api/auth/register', {
+      await fetchService.post('/api/auth/register', {
         username,
         email,
         password,

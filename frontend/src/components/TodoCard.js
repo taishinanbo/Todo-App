@@ -8,6 +8,7 @@ import {
   FaComment,
 } from 'react-icons/fa';
 import { toast } from 'react-toastify';
+import fetchService from '../../fetchService';
 
 const TodoCard = ({ todo, currentUserId, onToggle, onEdit, onDelete, onShare }) => {
   const isOwner = todo.userId?._id === currentUserId;
@@ -27,7 +28,8 @@ const TodoCard = ({ todo, currentUserId, onToggle, onEdit, onDelete, onShare }) 
 
   const fetchComments = async () => {
     try {
-      const res = await fetch(`http://localhost:5050/api/todos/${todo._id}/comments?page=${page}`, {
+      const res = await fetchService.get(`/api/todos/${todo._id}/comments`, {
+        params: { page },
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
@@ -40,14 +42,13 @@ const TodoCard = ({ todo, currentUserId, onToggle, onEdit, onDelete, onShare }) 
   const handleCommentSubmit = async () => {
     if (!commentText.trim()) return;
     try {
-      const res = await fetch(`http://localhost:5050/api/todos/${todo._id}/comments`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ text: commentText }),
-      });
+      const res = await fetchService.post(
+        `/api/todos/${todo._id}/comments`,
+        { text: commentText },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
       if (res.ok) {
         setCommentText('');
         toast.success('コメントを送信しました。');
@@ -63,22 +64,20 @@ const TodoCard = ({ todo, currentUserId, onToggle, onEdit, onDelete, onShare }) 
 
   const handleCommentDelete = async (commentId) => {
     try {
-      const res = await fetch(`http://localhost:5050/api/todos/${todo._id}/comments/${commentId}`, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      if (res.ok) {
-        toast.success('コメントを削除しました。');
-        setComments((prev) => prev.filter((c) => c._id !== commentId));
-      } else {
-        console.error('削除失敗');
-        toast.error('コメントの削除に失敗しました。');
-      }
+      const res = await fetchService.delete(
+        `/api/todos/${todo._id}/comments/${commentId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      toast.success('コメントを削除しました。');
+      setComments((prev) => prev.filter((c) => c._id !== commentId));
     } catch (err) {
       console.error('削除エラー', err);
+      toast.error('コメントの削除に失敗しました。');
     }
   };
 
