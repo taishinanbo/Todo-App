@@ -20,8 +20,16 @@ const TodoCard = ({ todo, currentUserId, onToggle, onEdit, onDelete, onShare }) 
   const [comments, setComments] = useState([]);
   const [page, setPage] = useState(1);
   const commentsPerPage = 5;
-  
+
+
+  // const date = {todos.map(todo => (
+  //   <div key={todo._id}>
+  //     <h3>{todo.title}</h3>
+  //     <p>作成日: {new Date(todo.createdAt).toLocaleString('ja-JP')}</p>
+  //   </div>
+  //     ))}
   // Fetch comments when modal opens
+
   useEffect(() => {
     if (showCommentModal) fetchComments();
   }, [showCommentModal, page]);
@@ -90,6 +98,9 @@ const TodoCard = ({ todo, currentUserId, onToggle, onEdit, onDelete, onShare }) 
     <>
       <div className="todo-main">
         <div className="todo-content">
+          <div className='todo-date'>
+            <p>作成日: {new Date(todo.createdAt).toLocaleString('ja-JP')}</p>
+          </div>
           <span
             onClick={() => onToggle(todo)}
             className={`todo-title ${todo.completed ? 'completed' : ''}`}
@@ -206,5 +217,3 @@ const TodoCard = ({ todo, currentUserId, onToggle, onEdit, onDelete, onShare }) 
 };
 
 export default TodoCard;
-
-å
